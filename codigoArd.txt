@@ -132,7 +132,7 @@ void loop()
 
 
 
-//Funcion que recibe los valores de horas, minutos y segundos par escribirlas en el lcd, no devuelve nada
+//Funcion que recibe los valores de horas, minutos y segundos para escribirlas en el lcd, no devuelve nada
   void escribirLcd(int d_horas, int d_minutos, int d_segundos, int u_horas,int u_minutos, int u_segundos ){
   lcd.setCursor(4,0);
   lcd.print("Horario"); 
@@ -189,7 +189,7 @@ void apretoBoton2(){
 
 
 /*
-Recibe 3 valores, 1 las decenas de las horas minutos o segundos, 2 la unidd de las horas minutos o segundos3 valor para dividir
+Función que recibe 3 valores, 1ero las decenas de las horas minutos o segundos, 2do la unidd de las horas minutos o segundos, 3ro valor para dividir
 hace el cálculo para dar la inclinación
 returna el resultado del cálculo 
 */
