@@ -45,14 +45,14 @@
   unsigned long millisAnterior=0;
 
 
-void loop()
-  {
+void loop(){
 
   int botonAhora = leerBoton();
   unsigned long millisActual=millis();
-   escribirLcd(d_horas,d_minutos,d_segundos,u_horas,u_minutos,u_segundos );
+  escribirLcd(d_horas,d_minutos,d_segundos,u_horas,u_minutos,u_segundos );
   
- if(botonAhora==NO_BOTON){
+ if(botonAhora==NO_BOTON)
+ {
   aumentoTiempo(millisActual);
  }
     
@@ -70,7 +70,8 @@ void loop()
   motor_10.write(inclinacionServoSegundos);
 
 
- if(botonAhora != NO_BOTON && botonAhora != botonAntes){
+ if(botonAhora != NO_BOTON && botonAhora != botonAntes)
+ {
   switch(botonAhora)
   { 
    case BOTON_1:
@@ -99,10 +100,8 @@ void loop()
    break;
   }
  }
-
   botonAntes = botonAhora;
 }
-
 
  // Lee el botón y devuelve retorno dependiendo cuál se toque
   int leerBoton(){
@@ -132,7 +131,10 @@ void loop()
 
 
 
-//Funcion que recibe los valores de horas, minutos y segundos para escribirlas en el lcd, no devuelve nada
+/*
+Función que recibe los valores de horas, minutos y segundos para escribirlas en el lcd, 
+no devuelve nada
+*/
   void escribirLcd(int d_horas, int d_minutos, int d_segundos, int u_horas,int u_minutos, int u_segundos ){
   lcd.setCursor(4,0);
   lcd.print("Horario"); 
@@ -147,11 +149,15 @@ void loop()
   lcd.print(u_segundos); 
 }
 
-//Función que aumenta en uno la unidad de las horas y aumenta las decenas cuando llega a 10, vuelve a 0 cuando llega a 24
+/*
+Función que aumenta en uno la unidad de las horas y aumenta las decenas cuando llega a 10, 
+vuelve a 0 cuando llega a 24
+*/
 
 void apretoBoton1(){
   seApretoBoton1=digitalRead(BOTON_1);
-  if(seApretoBoton1==HIGH){
+  if(seApretoBoton1==HIGH)
+  {
       u_horas++;
   if ( u_horas == 10 ) 
   {
@@ -172,9 +178,10 @@ void apretoBoton1(){
 //Función que aumenta en uno la unidad de los minutos y aumenta las decenas cuando llega a 10, vuelve a 0 cuando llega a 60
 void apretoBoton2(){
   seApretoBoton2=digitalRead(BOTON_2);
-  if(seApretoBoton2==HIGH){
+  if(seApretoBoton2==HIGH)
+  {
   u_minutos++;
-  if ( u_minutos == 10 ) 
+  if ( u_minutos == 10 )
   {
   u_minutos =0;
   d_minutos++; 
@@ -201,7 +208,8 @@ int Inclinacion(int valor1, int valor2, int valor3){
 }
 
 
-/*Funcion que se ejecuta cada un segundo,
+/*
+Funcion que se ejecuta cada un segundo,
 recibe el valor de millisActual para usarlo en la función,
 aumenta en uno la unidad de los segundos
 y aumenta los otros valores dependiendo la situación
@@ -209,7 +217,8 @@ y aumenta los otros valores dependiendo la situación
 void aumentoTiempo(unsigned long millisActual){
     
    if(((millisActual-millisAnterior)>1000))
-  {
+   {
+   
     u_segundos++;
     
     if ( u_segundos == 10 ) 
