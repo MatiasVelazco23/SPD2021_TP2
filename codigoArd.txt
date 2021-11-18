@@ -108,7 +108,7 @@ void loop()
   int leerBoton(){
   int valorA0 = analogRead(A0);
   
-  if(valorA0>502 && valorA0<522)
+  if(valorA0>1013 && valorA0<1033)
   {
   return BOTON_1;
   }
@@ -117,7 +117,7 @@ void loop()
   {
   return BOTON_2;
   }
-  if(valorA0>757 && valorA0<777)
+  if(valorA0>604 && valorA0<624)
   {
   return BOTON_3;
   }
