@@ -1,0 +1,253 @@
+// C++ code
+//
+
+  #define NO_BOTON 0
+  #define BOTON_1  1
+  #define BOTON_2  2
+  #define BOTON_3  3
+  #define PIN_RS 2
+  #define PIN_LCD 3
+  #define PIN_D4 4
+  #define PIN_D5 5 
+  #define PIN_D6 6
+  #define PIN_D7 7
+  #include <LiquidCrystal.h>
+  #include <Servo.h>
+  LiquidCrystal lcd(PIN_RS,PIN_LCD,PIN_D4,PIN_D5,PIN_D6,PIN_D7);
+
+  Servo motor_8;
+  Servo motor_9;
+  Servo motor_10;
+
+
+  void setup()
+  {
+  Serial.begin(9600);
+  lcd.begin(16,2);
+  motor_8.attach(8);
+  motor_9.attach(9);
+  motor_10.attach(10);
+  }
+
+  int botonAntes = NO_BOTON;
+  unsigned long millisAntes=0;
+  int d_horas=0;
+  int u_horas=0;
+  int d_minutos=0;
+  int u_minutos=0;
+  int d_segundos=0;
+  int u_segundos=0;
+  int inclinacionServo1=0;
+  int inclinacionServo2=0;
+  int inclinacionServo3=0;
+  int seApretoBoton1=0;
+  int seApretoBoton2=0;
+  unsigned long millisAnterior=0;
+
+
+void loop()
+  {
+
+  int botonAhora = leerBoton();
+  unsigned long millisActual=millis();
+   escribirLcd(d_horas,d_minutos,d_segundos,u_horas,u_minutos,u_segundos );
+  
+ if(botonAhora==NO_BOTON){
+  aumentoTiempo(millisActual);
+ }
+    
+  void servoMotoresInclincion();
+  int inclinacionServoHoras;
+  int inclinacionServoMinutos;
+  int inclinacionServoSegundos;
+  inclinacionServoHoras=Inclinacion(d_horas, u_horas, 24);
+  inclinacionServoMinutos=Inclinacion(d_minutos, u_minutos, 60);
+  inclinacionServoSegundos=Inclinacion(d_segundos, u_segundos, 60);
+
+
+  motor_8.write(inclinacionServoHoras);
+  motor_9.write(inclinacionServoMinutos);
+  motor_10.write(inclinacionServoSegundos);
+
+
+/* if(botonAhora != NO_BOTON && botonAhora != botonAntes){
+  switch(botonAhora)
+  { 
+   case BOTON_1:
+   Serial.println("BOTON 1");
+   apretoBoton1();
+   break;
+   case BOTON_2:
+   Serial.println("BOTON 2");
+   apretoBoton2();
+
+   break;
+   case BOTON_3:
+   Serial.println("BOTON 3");
+   u_segundos++;
+    if ( u_segundos == 10 ) 
+    {
+    u_segundos =0;
+    d_segundos++; 
+    }
+
+    if ( ( d_segundos == 6 ) && ( u_segundos== 0 ) ) 
+    {
+    d_segundos =0;
+    }   
+   
+   break;
+  }
+ }
+ */
+  botonAntes = botonAhora;
+}
+
+
+ // Lee el botón y devuelve retorno dependiendo cuál se toque
+  int leerBoton(){
+  int valorA0 = analogRead(A0);
+  
+  if(valorA0>502 && valorA0<522)
+  {
+  return BOTON_1;
+  }
+
+  if(valorA0>672 && valorA0<692)
+  {
+  return BOTON_2;
+  }
+  if(valorA0>757 && valorA0<777)
+  {
+  return BOTON_3;
+  }
+  
+  return NO_BOTON;
+  }
+
+
+
+
+
+
+
+
+//Funcion que recibe los valores de horas, minutos y segundos par escribirlas en el lcd, no devuelve nada
+  void escribirLcd(int d_horas, int d_minutos, int d_segundos, int u_horas,int u_minutos, int u_segundos ){
+  lcd.setCursor(4,0);
+  lcd.print("Horario"); 
+  lcd.setCursor(4, 1); 
+  lcd.print(d_horas);
+  lcd.print(u_horas); 
+  lcd.print(":"); 
+  lcd.print(d_minutos); 
+  lcd.print(u_minutos); 
+  lcd.print(":"); 
+  lcd.print(d_segundos); 
+  lcd.print(u_segundos); 
+}
+
+//Función que aumenta en uno la unidad de las horas y aumenta las decenas cuando llega a 10, vuelve a 0 cuando llega a 24
+
+void apretoBoton1(){
+  seApretoBoton1=digitalRead(BOTON_1);
+  if(seApretoBoton1==HIGH){
+      u_horas++;
+  if ( u_horas == 10 ) 
+  {
+  u_horas =0;
+  d_horas++; 
+  }
+     
+  if((d_horas ==2)&& (u_horas ==4))
+  {
+  d_horas=0;
+  u_horas=0;
+  }
+    
+  }
+}
+
+
+//Función que aumenta en uno la unidad de los minutos y aumenta las decenas cuando llega a 10, vuelve a 0 cuando llega a 60
+void apretoBoton2(){
+  seApretoBoton2=digitalRead(BOTON_2);
+  if(seApretoBoton2==HIGH){
+  u_minutos++;
+  if ( u_minutos == 10 ) 
+  {
+  u_minutos =0;
+  d_minutos++; 
+  }
+
+  if ( ( d_minutos == 6 ) && ( u_minutos == 0 ) ) 
+  {
+  d_minutos =0;
+  }
+  }
+}
+
+
+/*
+Recibe 3 valores, 1 las decenas de las horas minutos o segundos, 2 la unidd de las horas minutos o segundos3 valor para dividir
+hace el cálculo para dar la inclinación
+returna el resultado del cálculo 
+*/
+int Inclinacion(int valor1, int valor2, int valor3){
+  int resultado;
+  resultado=(((valor1*10)+valor2)*180)/valor3;
+  
+  return resultado;
+}
+
+
+/*Funcion que se ejecuta cada un segundo,
+recibe el valor de millisActual para usarlo en la función,
+aumenta en uno la unidad de los segundos
+y aumenta los otros valores dependiendo la situación
+*/
+void aumentoTiempo(unsigned long millisActual){
+    
+   if(((millisActual-millisAnterior)>1000))
+  {
+    u_segundos++;
+    
+    if ( u_segundos == 10 ) 
+    {
+    u_segundos =0;
+    d_segundos++;
+    }
+
+    if ( ( d_segundos == 6 ) && ( u_segundos == 0 ) )
+    {
+    d_segundos =0;
+    u_minutos++;
+    }
+    if ( u_minutos == 10 ) 
+    {
+    u_minutos =0;
+    d_minutos++;
+    }
+
+    if ( ( d_minutos == 6 ) && ( u_minutos == 0 ) ) 
+    {
+    d_minutos =0;
+    u_horas++;
+    }
+
+    if ( u_horas == 10 ) 
+    {
+    u_horas =0;
+    d_horas++; 
+    }
+    
+    if((d_horas ==2)&& (u_horas ==4))
+    {
+    d_horas=0;
+    u_horas=0;
+    }
+     
+  millisAnterior=millisActual;
+     
+  }
+}
